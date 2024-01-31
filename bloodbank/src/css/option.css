@@ -1,0 +1,40 @@
+.option{
+    height: 50vh;
+    width: 100%;
+    padding: 3rem 15rem;
+    background-color: brown;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.optiondesign{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 15rem;
+    width: 30%;
+    background-color: white;
+    position: relative;
+    z-index: 1;
+    border: 1px solid black;
+    border-radius: 1rem;
+}
+
+#headlogo{
+    height: 4rem;
+    width: 4rem;
+        border-radius: 50%;
+    background-color: rebeccapurple;
+   
+}
+.body p{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: red;
+    padding-top: 2rem;
+}

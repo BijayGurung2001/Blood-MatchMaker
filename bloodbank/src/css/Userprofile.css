@@ -1,0 +1,78 @@
+.userprofile{
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 999;
+    background-color: red;
+    
+
+}
+.profile_content{
+    display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+}
+.user_details{
+    background-color: #F2B6B6;
+    width: 20%;
+margin:5rem 5rem;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+.details_main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#profile_pic{
+height: 5rem;
+width: 5rem;
+border-radius: 50%;
+}
+
+.details_end{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.user_history{
+    height: 60vh;
+   width: 70%;
+   margin-right: 5rem;
+   background-color: white;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+.bgpic{
+    height: inherit;
+    width: 100%;
+    position: absolute;
+    z-index: -1;
+    object-fit: cover;
+}
+table{
+    height: inherit;
+    width: 100%;
+    border: 5px solid black;
+}
+th{
+    font-size: x-larger;
+    font-weight: bolder;
+    color: red;
+}
+tr{
+    border: 3px solid black;
+}
+td{
+    border: 1px solid black;
+    
+}

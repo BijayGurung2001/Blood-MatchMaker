@@ -1,0 +1,41 @@
+h3{
+    scroll-padding-top: 2rem;
+    font-size: 3rem;
+    font-weight: bolder;
+    color:rgb(146, 4, 4);
+}
+
+.news{
+    height: 75vh;
+  
+}
+.news_container{
+    display: flex;
+    flex-direction: row;
+    padding: 3rem 5rem;
+}
+img{
+    border-radius: 20px;
+}
+.news_elements{
+    margin-left: 2rem;
+    display: flex;
+    flex-direction: column;
+    text-align:justify;
+    text-justify:inter-word;
+
+   
+}
+p{
+    font-size: 25px;
+    
+}
+
+button{
+    margin-top: 2rem;
+    background-color: red;
+    color: white;
+    height: 2rem;
+    width: 10rem;
+
+}

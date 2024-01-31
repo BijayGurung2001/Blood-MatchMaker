@@ -1,0 +1,63 @@
+.signup{
+
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 999;
+    background-color: red;
+    
+    }
+    .signup_container{
+        height: 80vh;
+        width: 80%;
+        background:rgb(241, 213, 213);
+        display: flex;
+        flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    transform: translate(10%, 10%);
+    }
+    .signup_elements{
+    height: inherit;
+    width: 60%;
+    background-color: transparent;
+    background-color: rgb(248, 233, 233);
+
+    }
+    .spic{
+        height: inherit;
+        width: 100%;
+        position: absolute;
+        z-index: -1;
+        object-fit: cover;
+    }
+    .signup_entries{
+        padding-top: 3%;
+        height: inherit;
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+       
+    justify-content: center;
+    align-items: center;
+        border: 1px solid rebeccapurple;
+        align-items: center;
+    }
+
+    #quick{
+        margin-top: 1rem;
+        font-size: 20px;
+        font-weight: 600;
+        color: red;
+    }
+    #signup{
+
+        margin: 0 1rem;
+        color: red;
+    }
+    #quicktab{
+        margin-top: 1rem;
+    }
+ 
