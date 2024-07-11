@@ -1,66 +1,57 @@
-import React, { useState } from 'react'
+// src/pages/Login.js
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import loginpic from '../Photos/10.png';
+import '../css/Login.css';
 import NavBar from '../Components/NavBar'
-import { Link, useNavigate } from 'react-router-dom'
-import '../css/Login.css'
-import loginpic from '../Photos/10.png'
-import axios from 'axios'
 
 const Login = () => {
-  const [Input, SetInput]=useState({
-    email:"",
-    password:""
-  })
-  const navigate=useNavigate();
+  const [input, setInput] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
+  const handleInput = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+  };
 
-  const HandleInput =(e)=>{
+  const handleLoginForm = async (e) => {
     e.preventDefault();
-    SetInput({...Input,[e.target.name]:e.target.value})
-    console.log(Input)
-  }
-  const handleloginform=async(e)=>{
-    e.preventDefault();
-    try{
-      const response=await axios.post('http://localhost:5000/login',Input);
-     
-      const token=response.data.token;
-       localStorage.setItem('token',token);
-       navigate('/userprofile')
-    }catch(error){
+    try {
+      const response = await axios.post('http://localhost:5000/login', input);
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        navigate('/userprofile');
+      }
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <div className="login">
-      <img className='loginpic' src={loginpic}/>
-      <NavBar/>
-         <div className="login_container">
-       
-        <div className="login_elements">
-           <h3>Login Page</h3>
-        </div>
-        <div className="login_entries">
-         <form method='post' onSubmit={handleloginform}>
+       <NavBar/>
+      <img className="loginpic" src={loginpic} alt="Login" />
+      <div className="login_container">
+        <h3 id='login-h'>Login Page</h3>
+        <form className="login_form" onSubmit={handleLoginForm}>
           <div className="forminput">
-          <label>Email :</label>
-          <input type='email' name='email'  placeholder='email' required onChange={HandleInput}/>
+            <label>Email :</label>
+            <input type="email" name="email" placeholder="email" required onChange={handleInput} />
           </div>
           <div className="forminput">
-          <label>Password :</label>
-          <input type='password' name='password'  placeholder='password' required onChange={HandleInput}/>
-           </div>
+            <label>Password :</label>
+            <input type="password" name="password" placeholder="password" required onChange={handleInput} />
+          </div>
           <button>Login</button>
-
-          <li id='quick'><Link to='/forget'>Forget Password</Link></li>
-          <li>Don't have account <Link to="/signup" id='signup'>Sign up</Link></li>
-
-         </form>
-        </div>
+          <div className="links">
+            <Link to="/forget"><b>Forget Password</b></Link>
+            <br/>
+            <span>Don't have an account <Link to="/signup" > <b>Sign up</b></Link></span>
+          </div>
+        </form>
       </div>
-    
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

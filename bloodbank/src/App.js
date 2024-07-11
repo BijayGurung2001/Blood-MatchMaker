@@ -11,6 +11,8 @@ import UserProfile from './Pages/UserProfile';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import OrgProfile from './Pages/OrgProfile';
 import OrgProvider from './Context/OrganizationContext';
+
+import News from './Pages/News'
 function App() {
   return (
     <OrgProvider>
@@ -27,6 +29,7 @@ function App() {
         <Route path="/orgsignup" element={<OrgSignup/>}/>
         <Route path="/search" element={<Search/>}/>
         <Route path="/donation" element={<Donation/>}/>
+        <Route path="/news" element={<News/>}/>
         <Route path="/userprofile" element={<UserProfile/>}/>
        
       </Routes>

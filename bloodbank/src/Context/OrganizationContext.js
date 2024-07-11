@@ -3,11 +3,11 @@ import { useOrg } from "../Hooks/useOrg";
 
 export const OrganizationContext =createContext();
 
-function OrgProvider(children){
+function OrgProvider(props){
     const {orgData}=useOrg('http://localhost:5000/ ')
     return(
 <OrganizationContext.Provider value={orgData} >
-    {children}
+    {props.children}
 </OrganizationContext.Provider>
     )
 }

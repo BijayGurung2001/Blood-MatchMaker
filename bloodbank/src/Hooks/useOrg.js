@@ -15,7 +15,7 @@ function useOrg(url){
           
         }
         fetchdata()
-    },[])
+    },[url])
     return {orgData}
 }
 export {useOrg}

@@ -3,19 +3,23 @@
 left: 0;
 top: 0;
 height: 100vh;
-width: 100%;
+width: 1900px;
 position: relative;
 z-index: 999;
 background-color: red;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
 
 }
 .login_container{
-    height: 60vh;
-    width: 80%;
+    height:200x;
+    width: 100%;
     background:rgb(241, 213, 213);
     display: flex;
     flex-direction: row;
-justify-content: space-between;
+
 align-items: center;
 transform: translate(10%, 10%);
 }
@@ -64,4 +68,10 @@ input{
 #signup{
     margin: 0 1rem;
     color: red;
+}
+.login-h{
+   padding-left: 500px;
+}
+.login_form{
+
 }
