@@ -58,7 +58,7 @@ const UserProfile = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/search', { bloodType, quantity })
+    axios.post('http://localhost:5000/search', { bloodType, quantity, latitude: coords?.latitude, longitude: coords?.longitude })
       .then(response => setBloodBanks(response.data))
       .catch(error => console.error('Error searching:', error));
   };

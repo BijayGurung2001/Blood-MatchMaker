@@ -1,36 +1,35 @@
-const express= require('express');
-const bodyparser= require('body-parser');
-const cors= require('cors');
-const bcrypt=require('bcrypt')
-const db=require('../server/src/models/db')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const bcrypt = require('bcrypt');
+const db = require('../server/src/models/db');
 
-const app=express();
+const app = express();
 
-app.use(cors())
-app.use(bodyparser.json());
-
+app.use(cors());
+app.use(bodyParser.json());
 
 app.post('/signup', async (req, res) => {
-    const { fullname, email, dob, bloodtype, password } = req.body;
-    const hashpassword = await bcrypt.hash(password, 10);
+  const { fullname, email, dob, bloodtype, password } = req.body;
+  const hashpassword = await bcrypt.hash(password, 10);
 
-    const sql = 'INSERT INTO users (fullname, email, dob, bloodtype, password) VALUES (?,?,?,?,?)';
-    db.query(sql, [fullname, email, dob, bloodtype, hashpassword], (error, results) => {
-        if (error) {
-            console.error('Error inserting user:', error);
-            return res.status(500).json({ error: 'Internal server error' });
-        }
-        if (results) {
-            res.status(201).json({ message: 'User registered successfully' });
-        }
-    });
+  const sql = 'INSERT INTO users (fullname, email, dob, bloodtype, password) VALUES (?,?,?,?,?)';
+  db.query(sql, [fullname, email, dob, bloodtype, hashpassword], (error, results) => {
+    if (error) {
+      console.error('Error inserting user:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+    if (results) {
+      res.status(201).json({ message: 'User registered successfully' });
+    }
+  });
 });
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   console.log('Received email:', email);
   console.log('Received password:', password);
-  
+
   const sql = 'SELECT * FROM users WHERE email = ?';
   db.query(sql, [email], async (error, result) => {
     if (error) {
@@ -51,7 +50,7 @@ app.post('/login', async (req, res) => {
       res.status(200).json({
         message: 'Login successful',
         user: {
-          id:user.id,
+          id: user.id,
           fullname: user.fullname,
           email: user.email,
           dob: user.dob,
@@ -65,122 +64,146 @@ app.post('/login', async (req, res) => {
   });
 });
 
-  
-  app.get('/history', (req, res) => {
-    const email = req.query.email;
-    const sql = 'SELECT * FROM history WHERE email = ?';
-    db.query(sql, [email], (err, results) => {
-      if (err) {
-        return res.status(500).send('Error fetching history');
-      }
-      res.json(results);
-    });
-  });
-  
-  app.get('/bloodbanks', (req, res) => {
-    const sql = 'SELECT * FROM bloodbanks ORDER BY RAND() LIMIT 10';
-    db.query(sql, (err, results) => {
-      if (err) {
-        return res.status(500).send('Error fetching blood banks');
-      }
-      res.json(results);
-    });
-  });
-  
-  app.get('/search', (req, res) => {
-    const term = req.query.term;
-    const sql = 'SELECT * FROM bloodbanks WHERE name LIKE ? OR address LIKE ?';
-    db.query(sql, [`%${term}%`, `%${term}%`], (err, results) => {
-      if (err) {
-        return res.status(500).send('Error searching');
-      }
-      res.json(results);
-    });
-  });
-    
-
-  // Update user location endpoint
-  app.post('/update-location', (req, res) => {
-    const { userId, latitude, longitude } = req.body;
-  
-  
-    const sql = 'UPDATE users SET latitude = ?, longitude = ? WHERE id = ?';
-    db.query(sql, [latitude, longitude, userId], (error, result) => {
-      if (error) {
-        console.error('Error updating location:', error);
-        return res.status(500).json({ message: 'Error updating location' });
-      }
-      res.status(200).json({ message: 'Location updated successfully' });
-    });
-  });
-  app.post('/search', (req, res) => {
-    const { bloodType, quantity } = req.body;
-    console.log('Blood Type:', bloodType);
-    console.log('Quantity:', quantity);
-  
-    // Ensure bloodType is a valid column name and properly escaped
-    const validBloodTypes = [
-      'o+plasma', 'o+redcell', 'o-plasma', 'o-redcell',
-      'a+plasma', 'a+redcell', 'a-plasma', 'a-redcell',
-      'b+plasma', 'b+redcell', 'b-plasma', 'b-redcell',
-      'ab+plasma', 'ab+redcell', 'ab-plasma', 'ab-redcell'
-    ];
-  
-    if (!validBloodTypes.includes(bloodType)) {
-      return res.status(400).send('Invalid blood type');
+app.get('/history', (req, res) => {
+  const email = req.query.email;
+  const sql = 'SELECT * FROM history WHERE email = ?';
+  db.query(sql, [email], (err, results) => {
+    if (err) {
+      return res.status(500).send('Error fetching history');
     }
-  
-    const sql = `
-      SELECT 
-        orgdetails.orgname, 
-        orgdetails.orgaddress, 
-        orgdetails.orgcontact, 
-        orgdetails.orgemail, 
-        orgdetails.latitude, 
-        orgdetails.longitude,
-        \`bloodstorage\`.\`${bloodType}\` AS availableQuantity
-      FROM orgdetails 
-      INNER JOIN bloodstorage 
-      ON orgdetails.org_id = bloodstorage.org_id 
-      WHERE \`bloodstorage\`.\`${bloodType}\` >= ?`;
-  
-    db.query(sql, [quantity], (err, results) => {
-      if (err) {
-        console.error('Error searching:', err);
-        return res.status(500).send('Error searching');
-      }
-      res.json(results);
-    });
+    res.json(results);
   });
-  
-  
-  
-
-  app.post('/orgsignup', async (req, res) => {
-    const orgdetails = req.body;
-    console.log({ orgdetails });
-    try {
-        const hashpassword = await bcrypt.hash(orgdetails.orgpassword, 10);
-        console.log(orgdetails)
-        const sqlquery = 'INSERT INTO orgdetails (orgname, orgaddress, orgcontact, orgemail, orgpassword) VALUES (?,?,?,?,?)'
-        db.query(sqlquery, [orgdetails.orgname, orgdetails.orgaddress, orgdetails.orgcontact, orgdetails.orgemail, hashpassword], (error, result) => {
-            if (error) {
-                res.status(400).json({ message: 'Problem in inserting org details in database' });
-                return;
-            }
-            console.log('success org data input');
-            res.status(200).json({ message: 'Successfully inserted into database' });
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
 });
 
+app.get('/bloodbanks', (req, res) => {
+  const sql = 'SELECT * FROM bloodbanks ORDER BY RAND() LIMIT 10';
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).send('Error fetching blood banks');
+    }
+    res.json(results);
+  });
+});
+
+// Update user location endpoint
+app.post('/update-location', (req, res) => {
+  const { userId, latitude, longitude } = req.body;
+
+  const sql = 'UPDATE users SET latitude = ?, longitude = ? WHERE id = ?';
+  db.query(sql, [latitude, longitude, userId], (error, result) => {
+    if (error) {
+      console.error('Error updating location:', error);
+      return res.status(500).json({ message: 'Error updating location' });
+    }
+    res.status(200).json({ message: 'Location updated successfully' });
+  });
+});
+
+app.post('/search', (req, res) => {
+  const { bloodType, quantity, latitude, longitude } = req.body;
+  console.log('Blood Type:', bloodType);
+  console.log('Quantity:', quantity);
+  console.log('User Location:', latitude, longitude);
+
+  const validBloodTypes = [
+    'o+plasma', 'o+redcell', 'o-plasma', 'o-redcell',
+    'a+plasma', 'a+redcell', 'a-plasma', 'a-redcell',
+    'b+plasma', 'b+redcell', 'b-plasma', 'b-redcell',
+    'ab+plasma', 'ab+redcell', 'ab-plasma', 'ab-redcell'
+  ];
+
+  if (!validBloodTypes.includes(bloodType)) {
+    return res.status(400).send('Invalid blood type');
+  }
+
+  const sql = `
+    SELECT 
+      orgdetails.orgname, 
+      orgdetails.orgaddress, 
+      orgdetails.orgcontact, 
+      orgdetails.orgemail, 
+      orgdetails.latitude, 
+      orgdetails.longitude,
+      \`bloodstorage\`.\`${bloodType}\` AS availableQuantity
+    FROM orgdetails 
+    INNER JOIN bloodstorage 
+    ON orgdetails.org_id = bloodstorage.org_id 
+    WHERE \`bloodstorage\`.\`${bloodType}\` >= ?`;
+
+  db.query(sql, [quantity], (err, results) => {
+    if (err) {
+      console.error('Error searching:', err);
+      return res.status(500).send('Error searching');
+    }
+         //harvesine Formula to caalculate the nearby organization list and sorted
+    const haversineDistance = (lat1, lon1, lat2, lon2) => {
+      const toRadians = (degrees) => (degrees * Math.PI) / 180;
+      const R = 6371; // Earth's radius in km
+
+      const dLat = toRadians(lat2 - lat1);
+      const dLon = toRadians(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    };
+
+    const sortedResults = results.map(result => ({
+      ...result,
+      distance: haversineDistance(latitude, longitude, result.latitude, result.longitude)
+    })).sort((a, b) => a.distance - b.distance);
+
+    res.json(sortedResults);
+  });
+});
+
+app.post('/orgsignup', async (req, res) => {
+  const orgdetails = req.body;
+  console.log({ orgdetails });
+  try {
+    const hashpassword = await bcrypt.hash(orgdetails.orgpassword, 10);
+    console.log(orgdetails);
+    const sqlquery = 'INSERT INTO orgdetails (orgname, orgaddress, orgcontact, orgemail, orgpassword, latitude, longitude) VALUES (?,?,?,?,?,?,?)';
+    db.query(sqlquery, [orgdetails.orgname, orgdetails.orgaddress, orgdetails.orgcontact, orgdetails.orgemail, hashpassword, orgdetails.latitude, orgdetails.longitude], (error, result) => {
+      if (error) {
+        res.status(400).json({ message: 'Problem in inserting org details in database' });
+        return;
+      }
+      console.log('success org data input');
+      res.status(200).json({ message: 'Successfully inserted into database' });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/orgsignup', async (req, res) => {
+  const orgdetails = req.body;
+  console.log({ orgdetails });
+  try {
+    const hashpassword = await bcrypt.hash(orgdetails.orgpassword, 10);
+    console.log(orgdetails);
+    const sqlquery = 'INSERT INTO orgdetails (orgname, orgaddress, orgcontact, orgemail, orgpassword, latitude, longitude) VALUES (?,?,?,?,?,?,?)';
+    db.query(sqlquery, [orgdetails.orgname, orgdetails.orgaddress, orgdetails.orgcontact, orgdetails.orgemail, hashpassword, orgdetails.latitude, orgdetails.longitude], (error, result) => {
+      if (error) {
+        res.status(400).json({ message: 'Problem in inserting org details in database' });
+        return;
+      }
+      console.log('success org data input');
+      res.status(200).json({ message: 'Successfully inserted into database' });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 app.post('/orglogin', async (req, res) => {
   const { email, password } = req.body;
-console.log(email)
+  console.log(email);
   const sqlquery = 'SELECT * FROM orgdetails WHERE orgemail = ?';
 
   db.query(sqlquery, [email], (error, result) => {
@@ -223,9 +246,10 @@ app.post('/orgprofile', async (req, res) => {
     res.status(200).json({ org: result[0] });
   });
 });
+
 app.post('/orginventory', async (req, res) => {
   const { id } = req.body;
-  console.log(id)
+  console.log(id);
   const sqlquery = 'SELECT * FROM bloodstorage WHERE org_id = ?';
   db.query(sqlquery, [id], (error, result) => {
     if (error) {
@@ -239,9 +263,6 @@ app.post('/orginventory', async (req, res) => {
     console.log(result);
   });
 });
-
-
-
 
 app.post('/updateinventory', async (req, res) => {
   const { id, bloodData } = req.body;
@@ -269,11 +290,10 @@ app.post('/updateinventory', async (req, res) => {
   });
 });
 
-
-app.listen(5000, (err)=>{
-if(err){
-    console.log(err)
-}else{
-    console.log('server is running at 5000')
-}
-})
+app.listen(5000, (err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log('server is running at 5000');
+  }
+});
